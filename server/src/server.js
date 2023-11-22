@@ -4,7 +4,7 @@ const express = require('express');
 const cors = require('cors')
 const errorHandler = require('@middlewares/errorHandling/errorHandler');
 const mobileNumberValidator = require('@middlewares/validators/mobileNumberValidator');
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 5000
 
 const app = express()
 
