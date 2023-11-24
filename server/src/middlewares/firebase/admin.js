@@ -1,8 +1,10 @@
-
+const path = require('path')
 const admin = require('firebase-admin')
 
+const serviceAccountKeyPath = path.resolve(__dirname, process.env.GOOGLE_APPLICATION_CREDENTIALS);
+
 admin.initializeApp({
-    credential: admin.credential.applicationDefault()
+    credential: admin.credential.cert(require(serviceAccountKeyPath))
 })
 
 const isExsistingUser = async(mobileNumber) =>{

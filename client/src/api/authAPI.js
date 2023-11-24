@@ -2,7 +2,7 @@ import {auth_axios} from "../axios/axios";
 import axios from "axios";
 export const loginRequest = async(loginCredentials) =>{
   try {
-    const response = await auth_axios.post('/login', loginCredentials)
+    const response = await auth_axios.post('/api/auth/login', loginCredentials)
     console.log(response);
     if(response.status === 200) return response.data
   } catch (error) {
@@ -14,7 +14,7 @@ export const loginRequest = async(loginCredentials) =>{
 
 export const registerRequest = async(registerCredentials) =>{
   try {
-      const response = await auth_axios.post('/register', registerCredentials)
+      const response = await auth_axios.post('/api/auth/register', registerCredentials)
       if(response.status === 201) return response.data
   } catch (error) {
     console.log(error);
