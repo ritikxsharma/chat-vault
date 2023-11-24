@@ -1,5 +1,5 @@
 const {
-    NotFoundError, BadRequestError
+    NotFoundError, BadRequestError, InternalServerError
 } = require('../middlewares/errorHandling/errors')
 const {
     isExsistingUser,
@@ -12,16 +12,19 @@ const login = async(req, res, next) =>{
         const phoneNumber = `${countryCode}${mobileNumber}`
         const existingUser = await isExsistingUser(phoneNumber)
 
-        if(existingUser === 'auth/user-not-found'){
-            throw new NotFoundError('User Not Found')
-        }
-
-        res.status(200).json(
-            {
-                message: "User Exists",
-                user: existingUser
+        switch(existingUser.code){
+            case 'auth/user-not-found':
+                throw new NotFoundError('User not found')
+            
+            case 'auth/user-exists':{
+                res.status(200).json({
+                    message: 'user exists',
+                    user: existingUser
+                })
             }
-        )
+            default:
+                throw new InternalServerError('Internal Server Error')
+        }
         
     } catch (error) {
         next(error)
@@ -33,19 +36,23 @@ const register = async(req, res, next) =>{
         const{ countryCode, mobileNumber } = req.body
         const phoneNumber = `${countryCode}${mobileNumber}`
         const existingUser = await isExsistingUser(phoneNumber)
-        if(!existingUser){
-            throw new BadRequestError('user already exists')
+
+        switch(existingUser.code){
+            case 'auth/user-exists':
+                throw new BadRequestError('user already exists')
+            
+            case 'auth/user-not-found':{
+                const newUser = await createNewUser({phoneNumber})
+                res.status(201).json({
+                    message: 'User registered successfully',
+                    user: newUser
+                })
+            }
+
+            default:
+                throw new InternalServerError('Internal Server Error')
         }
 
-        const newUser = await createNewUser({phoneNumber})
-        
-        res.status(200).json(
-            {
-                message: "New User Created",
-                user: newUser
-            }
-        )
-        
     } catch (error) {
         next(error)
     }

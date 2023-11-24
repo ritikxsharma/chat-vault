@@ -40,20 +40,21 @@ const Login = ({handleAuthChange, handleConfirmationResult}) => {
         
         setIsLoading(true)
         const response = await loginRequest(credentials);
-        
         if(!response.error){
-          await handle_send_otp(auth, credentials, recaptchaVerifier)
-          .then((result)=>{
-            dispatch(handle_login_request(response.user))
-            handleConfirmationResult(result)
-          }) 
-          .catch((error) =>{
-            console.log(error);
-          })
+          // await handle_send_otp(auth, credentials, recaptchaVerifier)
+          // .then((result)=>{
+          //   dispatch(handle_login_request(response.user))
+          //   handleConfirmationResult(result)
+          // }) 
+          // .catch((error) =>{
+          //   console.log(error.code);
+          //   setError(error.code)
+          // })
+          console.log('OTP SENT');
         }
 
         else{
-          setError(response.error.message)
+          console.log('error');
         }
 
       } catch (error) {

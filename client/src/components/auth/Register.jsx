@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import Loader from '../loading/Loader'
 import { registerRequest } from '../../api/authAPI'
-import { useSelector } from 'react-redux'
 import CountrySelect from './CountrySelect'
 
 const Register = ({handleAuthChange}) => {
@@ -11,8 +10,7 @@ const Register = ({handleAuthChange}) => {
     mobileNumber: ''
   })
   const [message, setMessage] = useState('')
-
-  const isAuthenticating = useSelector((state) => state.auth.isAuthenticating)
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleInputChange = (e) =>{
     const{
@@ -29,9 +27,10 @@ const Register = ({handleAuthChange}) => {
   const handleRegister = async() =>{
       try {
         setMessage('')
+        setIsLoading(true)
         const response = await registerRequest(credentials)
         if(!response.error){
-          console.log(response.data);
+          setMessage(response.message)
           setTimeout(()=>{
             handleAuthChange('LOGIN')
           }, 2000)
@@ -41,6 +40,8 @@ const Register = ({handleAuthChange}) => {
         }
       } catch (error) {
         setMessage('Error Occurred')
+      } finally{
+        setIsLoading(false)
       }
   }
 
@@ -80,7 +81,7 @@ return (
 
         <button onClick={handleRegister}>
           {
-            isAuthenticating ? (
+            isLoading ? (
               <Loader type={'spinner'}></Loader>
             ) : (
               'Register'
